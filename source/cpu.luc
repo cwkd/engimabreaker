@@ -1,0 +1,151 @@
+// alu op  = [opcode][dest][op1][op2][2]
+// alu opc = [opcode][dest][op1][lit]
+// br  op  = [opcode][111111][op1][op2][2]
+// br  opc = [opcode][111111][op1][lit]
+// jmp op  = [opcode][111111][op1][op2][2]
+// jmp opc = [opcode][111111][op1][lit]
+
+
+module cpu (
+    input clk,  // clock
+    input rst,  // reset
+    input button[8],
+    input irq,
+    output write,
+    output read,
+    output address[16],
+    output buttonreset,
+    input din[26]
+  ) {
+  
+  
+  .clk(clk), .rst(rst) {
+    regfile regfile;   // CPU Registers
+    dff pc[16];           // program counter
+  }
+  
+  controllogic controllogic;
+  alu8 alu;
+  
+  sig pageNumber[8];    // physical pagemap
+  sig localAddress[8];  // instruction line offset within page
+  
+  sig opcode[6];  // opcode       
+  sig dest[6];    // destination register; reg[rc]
+  sig op1[6];     // operand 1; reg[ra]
+  sig op2[6];     // operand 2; reg[rb]
+  sig literal[8]; // literal
+  sig ra2[6];     // read address 2 for register file    
+  
+  sig rd1[8];     // read data 1
+  sig rd2[8];     // read data 2
+  sig adata[8];   // operand 1 data
+  sig bdata[8];   // operand 2 data
+  sig wd[8];      // write data 1
+  sig werf;       // write enable 1
+  sig ra2sel;     // select read address
+  
+  sig alufn[6];   // alufn
+  sig z;          // z for rd1
+  
+  sig bsel;       // select input to b port of alu
+  sig xpcsel[3];   // select input for pcsel mux
+  
+  
+  
+  always {
+    write = 0;
+    read = 0;
+    buttonreset = 0;
+    
+    address = pc.q;      // set current address of rom to pc value
+    
+    opcode = din[25:20];  // extract opcode
+    dest = din[19:14];    // extract destination register address
+    op1 = din[13:8];      // extract operand 1 address
+    op2 = din[7:2];       // extract operand 2 address
+    literal = din[7:0];   // extract literal
+    
+    controllogic.opcode = opcode;  // input opcode to control logic
+    alufn = controllogic.alufn;    // get alufn for given opcode
+    werf = controllogic.werf;      // get werf for given opcode
+    bsel = controllogic.bsel;      // get bsel for given opcode
+    xpcsel = controllogic.pcsel;   // get pcsel for given opcode
+    ra2sel = controllogic.ra2sel;  // get ra2sel for given opcode  
+    
+    wd = alu.alu;
+    alu.cin = 0;
+    alu.alufn = alufn;
+    
+    
+    if (ra2sel == 1) {
+      ra2 = dest;
+    } else {
+      ra2 = op2;
+    }
+    
+    regfile.button = button;
+    regfile.ra1 = op1;
+    regfile.ra2 = ra2;
+    
+    rd1 = regfile.rd1;
+    rd2 = regfile.rd2;
+    z   = regfile.z;
+    regfile.wa = dest;
+    regfile.we = werf;
+    
+    adata = rd1;
+    bdata = rd2;
+    
+    if (bsel == 1) {
+      bdata = literal;
+    }
+    
+    alu.a = adata;
+    alu.b = bdata;
+    
+    regfile.wd = wd;
+    
+    if (opcode == Inst.BRST) {
+      buttonreset = 1;
+    }
+    
+    if (opcode == Inst.BEQ) {
+      if (z == 1) {
+        localAddress = literal;
+        pageNumber = rd2;
+      } else {
+        localAddress = pc.q[7:0] + 1;
+        pageNumber = pc.q[15:8];
+      }
+    }
+    else if (opcode == Inst.BNE) {
+      if (z == 0) {
+        localAddress = literal;
+        pageNumber = rd2;
+      } else {
+        localAddress = pc.q[7:0] + 1;
+        pageNumber = pc.q[15:8];
+      }
+    }
+    else if (opcode == Inst.JMP) {
+      localAddress = literal;
+      pageNumber = rd2;
+    }
+    else if (opcode == Inst.JMP1) {
+      localAddress = rd1;
+      pageNumber = rd2;
+    }  
+    else if (opcode == Inst.JMP2) {
+      localAddress = rd2;
+      pageNumber = literal;
+    }  
+    else {
+      localAddress = pc.q[7:0] + 1;
+      pageNumber = pc.q[15:8];
+    }
+    //pc.d = pc.q + 1;           // increament PC by default (1)
+    pc.d[7:0] = localAddress;  // set higher 16 bits of pc to page number
+    pc.d[15:8] = pageNumber;   // set lower 16 bits for pc to instruction line offset
+  }
+}

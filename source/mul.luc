@@ -1,0 +1,114 @@
+module mul (
+    input a[8],
+    input b[8],
+    output p[8]
+  ) {
+  
+  sig x[8][8];
+  sig s[7][7];
+  var i; var j;
+  
+  // bit-1
+  full_adder fa00;
+  full_adder fa01;
+  full_adder fa02;
+  full_adder fa03;
+  full_adder fa04;
+  full_adder fa05;
+  full_adder fa06;
+  
+  // bit-2
+  full_adder fa10;
+  full_adder fa11;
+  full_adder fa12;
+  full_adder fa13;
+  full_adder fa14;
+  full_adder fa15;
+  
+  // bit-3
+  full_adder fa20;
+  full_adder fa21;
+  full_adder fa22;
+  full_adder fa23;
+  full_adder fa24;
+  
+  // bit-4
+  full_adder fa30;
+  full_adder fa31;
+  full_adder fa32;
+  full_adder fa33;
+  
+  // bit-5
+  full_adder fa40;
+  full_adder fa41;
+  full_adder fa42;
+  
+  // bit-6
+  full_adder fa50;
+  full_adder fa51;
+  
+  // bit-7
+  full_adder fa60;
+      
+  always {
+    
+    // Generate the partial products
+    for (i = 0; i < 8; i++) {
+      for (j = 0; j < 8; j++) {
+        x[i][j] = a[j] && b[i];
+      }
+    }
+    // bit-0
+    p[0] = x[0][0];
+    
+    // bit-1
+    fa00.a = x[0][1]; fa00.b = x[1][0]; fa00.cin = 0; s[0][0] = fa00.sum;
+    fa01.a = x[0][2]; fa01.b = x[1][1]; fa01.cin = fa00.cout; s[0][1] = fa01.sum;
+    fa02.a = x[0][3]; fa02.b = x[1][2]; fa02.cin = fa01.cout; s[0][2] = fa02.sum;
+    fa03.a = x[0][4]; fa03.b = x[1][3]; fa03.cin = fa02.cout; s[0][3] = fa03.sum;
+    fa04.a = x[0][5]; fa04.b = x[1][4]; fa04.cin = fa03.cout; s[0][4] = fa04.sum;
+    fa05.a = x[0][6]; fa05.b = x[1][5]; fa05.cin = fa04.cout; s[0][5] = fa05.sum;
+    fa06.a = x[0][7]; fa06.b = x[1][6]; fa06.cin = fa05.cout; s[0][6] = fa06.sum;
+    p[1] = s[0][0];
+    
+    // bit-2
+    fa10.a = x[2][0]; fa10.b = s[0][1]; fa10.cin = 0; s[1][0] = fa10.sum;
+    fa11.a = x[2][1]; fa11.b = s[0][2]; fa11.cin = fa10.cout; s[1][1] = fa11.sum;
+    fa12.a = x[2][2]; fa12.b = s[0][3]; fa12.cin = fa11.cout; s[1][2] = fa12.sum;
+    fa13.a = x[2][3]; fa13.b = s[0][4]; fa13.cin = fa12.cout; s[1][3] = fa13.sum;
+    fa14.a = x[2][4]; fa14.b = s[0][5]; fa14.cin = fa13.cout; s[1][4] = fa14.sum;
+    fa15.a = x[2][5]; fa15.b = s[0][6]; fa15.cin = fa14.cout; s[1][5] = fa15.sum;
+    p[2] = s[1][0];
+    
+    // bit-3
+    fa20.a = x[3][0]; fa20.b = s[1][1]; fa20.cin = 0; s[2][0] = fa20.sum;
+    fa21.a = x[3][1]; fa21.b = s[1][2]; fa21.cin = fa20.cout; s[2][1] = fa21.sum;
+    fa22.a = x[3][2]; fa22.b = s[1][3]; fa22.cin = fa21.cout; s[2][2] = fa22.sum;
+    fa23.a = x[3][3]; fa23.b = s[1][4]; fa23.cin = fa22.cout; s[2][3] = fa23.sum;
+    fa24.a = x[3][4]; fa24.b = s[1][5]; fa24.cin = fa23.cout; s[2][4] = fa24.sum;
+    p[3] = s[2][0];
+    
+    // bit-4
+    fa30.a = x[4][0]; fa30.b = s[2][1]; fa30.cin = 0; s[3][0] = fa30.sum;
+    fa31.a = x[4][1]; fa31.b = s[2][2]; fa31.cin = fa30.cout; s[3][1] = fa31.sum;
+    fa32.a = x[4][2]; fa32.b = s[2][3]; fa32.cin = fa31.cout; s[3][2] = fa32.sum;
+    fa33.a = x[4][3]; fa33.b = s[2][4]; fa33.cin = fa32.cout; s[3][3] = fa33.sum;
+    p[4] = s[3][0];
+    
+    // bit-5
+    fa40.a = x[5][0]; fa40.b = s[3][1]; fa40.cin = 0; s[4][0] = fa40.sum;
+    fa41.a = x[5][1]; fa41.b = s[3][2]; fa41.cin = fa40.cout; s[4][1] = fa41.sum;
+    fa42.a = x[5][2]; fa42.b = s[3][3]; fa42.cin = fa41.cout; s[4][2] = fa42.sum;
+    p[5] = s[4][0];
+    
+    // bit-6
+    fa50.a = x[6][0]; fa50.b = s[4][1]; fa50.cin = 0; s[5][0] = fa50.sum;
+    fa51.a = x[6][1]; fa51.b = s[4][2]; fa51.cin = fa50.cout; s[5][1] = fa51.sum;
+    p[6] = s[5][0];
+    
+    // bit-7
+    fa60.a = x[7][0]; fa60.b = s[5][1]; fa60.cin = 0; s[6][0] = fa60.sum;
+    p[7] = s[6][0];
+    
+  }
+}

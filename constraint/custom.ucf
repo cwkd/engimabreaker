@@ -1,0 +1,50 @@
+NET "r_button" LOC = 51 | IOSTANDARD = LVTTL | PULLDOWN;
+NET "g_button" LOC = 41 | IOSTANDARD = LVTTL | PULLDOWN;
+NET "b_button" LOC = 35 | IOSTANDARD = LVTTL | PULLDOWN;
+NET "y_button" LOC = 33 | IOSTANDARD = LVTTL | PULLDOWN;
+
+NET "up_button" LOC = 50 | IOSTANDARD = LVTTL | PULLDOWN;
+NET "down_button" LOC = 40 | IOSTANDARD = LVTTL | PULLDOWN;
+NET "left_button" LOC = 34 | IOSTANDARD = LVTTL | PULLDOWN;
+NET "right_button" LOC = 32 | IOSTANDARD = LVTTL | PULLDOWN;
+NET "conf_button" LOC = 29 | IOSTANDARD = LVTTL | PULLDOWN;
+
+NET "seg_one<0>" LOC = P58 | IOSTANDARD = LVTTL;
+NET "seg_one<1>" LOC = P67 | IOSTANDARD = LVTTL;
+NET "seg_one<2>" LOC = P75 | IOSTANDARD = LVTTL;
+NET "seg_one<3>" LOC = P79 | IOSTANDARD = LVTTL;
+NET "seg_one<4>" LOC = P81 | IOSTANDARD = LVTTL;
+NET "seg_one<5>" LOC = P83 | IOSTANDARD = LVTTL;
+NET "seg_one<6>" LOC = P85 | IOSTANDARD = LVTTL;
+NET "seg_one<7>" LOC = P88 | IOSTANDARD = LVTTL;
+
+NET "seg_two<0>" LOC = P57 | IOSTANDARD = LVTTL;
+NET "seg_two<1>" LOC = P66 | IOSTANDARD = LVTTL;
+NET "seg_two<2>" LOC = P74 | IOSTANDARD = LVTTL;
+NET "seg_two<3>" LOC = P78 | IOSTANDARD = LVTTL;
+NET "seg_two<4>" LOC = P80 | IOSTANDARD = LVTTL;
+NET "seg_two<5>" LOC = P82 | IOSTANDARD = LVTTL;
+NET "seg_two<6>" LOC = P84 | IOSTANDARD = LVTTL;
+NET "seg_two<7>" LOC = P87 | IOSTANDARD = LVTTL;
+
+NET "seg_three<0>" LOC = P93 | IOSTANDARD = LVTTL;
+NET "seg_three<1>" LOC = P95 | IOSTANDARD = LVTTL;
+NET "seg_three<2>" LOC = P98 | IOSTANDARD = LVTTL;
+NET "seg_three<3>" LOC = P100 | IOSTANDARD = LVTTL;
+NET "seg_three<4>" LOC = P102 | IOSTANDARD = LVTTL;
+NET "seg_three<5>" LOC = P105 | IOSTANDARD = LVTTL;
+NET "seg_three<6>" LOC = P112 | IOSTANDARD = LVTTL;
+NET "seg_three<7>" LOC = P115 | IOSTANDARD = LVTTL;
+
+NET "seg_lives<0>" LOC = P92 | IOSTANDARD = LVTTL;
+NET "seg_lives<1>" LOC = P94 | IOSTANDARD = LVTTL;
+NET "seg_lives<2>" LOC = P97 | IOSTANDARD = LVTTL;
+NET "seg_lives<3>" LOC = P99 | IOSTANDARD = LVTTL;
+NET "seg_lives<4>" LOC = P101 | IOSTANDARD = LVTTL;
+NET "seg_lives<5>" LOC = P104 | IOSTANDARD = LVTTL;
+NET "seg_lives<6>" LOC = P111 | IOSTANDARD = LVTTL;
+NET "seg_lives<7>" LOC = P114 | IOSTANDARD = LVTTL;
+
+
+
+

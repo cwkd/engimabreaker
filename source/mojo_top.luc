@@ -1,0 +1,95 @@
+module mojo_top (
+    input clk,              // 50MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input cclk,             // configuration clock, AVR ready when high
+    output spi_miso,        // AVR SPI MISO
+    input spi_ss,           // AVR SPI Slave Select
+    input spi_mosi,         // AVR SPI MOSI
+    input spi_sck,          // AVR SPI Clock
+    output spi_channel [4], // AVR general purpose pins (used by default to select ADC channel)
+    input avr_tx,           // AVR TX (FPGA RX)
+    output avr_rx,          // AVR RX (FPGA TX)
+    input avr_rx_busy,      // AVR RX buffer full
+    output io_led [3][8],   // LEDs on IO Shield
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [4],      // Digit select on IO Shield
+    input io_button [5],    // 5 buttons on IO Shield
+    input io_dip [3][8],    // DIP switches on IO Shield
+    
+    output seg_one[8],      // seven seg digit one
+    output seg_two[8],      // seven seg digit two
+    output seg_three[8],    // seven seg digit three
+    output seg_lives[8],    // seven seg for lives display 
+    
+    input r_button,         // Red button
+    input g_button,         // Green button
+    input b_button,         // Blue button
+    input y_button,         // Yellow button
+    input up_button,        // Up button
+    input down_button,      // Down button
+    input left_button,      // Left button
+    input right_button,     // Right button
+    input conf_button       // Confirm button
+  ) {
+  
+  sig rst;                  // reset signal
+  
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    .rst(rst) {
+      buttoninputdecoder buttondecoder;  // decoder for button input
+      cpu cpu;                          // cpu
+      programRom progROM;               // program rom
+    }
+  }
+  
+  seven_seg seg1;
+  seven_seg seg2;
+  seven_seg seg3;
+  seven_seg segL;
+  
+  always {
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
+    
+    led = 8h00;             // turn LEDs off
+    spi_miso = bz;          // not using SPI
+    spi_channel = bzzzz;    // not using flags
+    avr_rx = bz;            // not using serial port
+    
+    io_led = 3x{{8h00}};    // turn LEDs off
+    io_seg = 8hff;          // turn segments off
+    io_sel = 4hf;           // select no digits
+    
+    seg1.in = 4h0;
+    seg2.in = 4h0;
+    seg3.in = 4h0;
+    segL.in = 4h0;
+    
+    seg_one = seg1.out;
+    seg_two = seg2.out;
+    seg_three = seg3.out;
+    seg_lives = segL.out;
+    
+    buttondecoder.red = r_button;     // connect red button to decoder
+    buttondecoder.green = g_button;   // connect green button to decoder
+    buttondecoder.blue = b_button;    // connect blue button to decoder 
+    buttondecoder.yellow = y_button;  // connect yellow button to decoder
+    
+    buttondecoder.up = up_button;
+    buttondecoder.down = down_button;
+    buttondecoder.left = left_button;
+    buttondecoder.right = right_button;
+    buttondecoder.confirm = conf_button;
+    
+    progROM.address = cpu.address;    // connect cpu pc to address port of program ROM
+    cpu.din = progROM.inst;           // connect data port of program ROM to cpu
+    
+    cpu.irq = buttondecoder.irq;
+    cpu.button = buttondecoder.value;
+    buttondecoder.reset = cpu.buttonreset;
+  }
+}

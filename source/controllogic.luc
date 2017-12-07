@@ -1,0 +1,335 @@
+global Inst {
+  const NOP    = 6b000000;
+  const BRST   = 6b000001; // button reset
+  const JMP1   = 6b000010; // dest, op1               : PC[15:8] = R[dest], PC[7:0] = R[op1]
+  const JMP2   = 6b000011; // dest, const             : PC[15:8] = const, PC[7:0] = R[dest]
+  
+  const LD     = 6b011000; // dest, op1, offset       : R[dest] = M[R[op1] + offset] 
+  const ST     = 6b011001; // src, op1, offset        : M[R[op1] + offset] = R[src]
+  const SET    = 6b011010; // dest, const             : R[dest] = const
+  const JMP    = 6b011011; // dest, const             : PC[15:8] = R[dest], PC[7:0] = const 
+  const BEQ    = 6b011101; // dest, op1, const        : EA = (R[dest] << 8) + const, if z(R[op1]) == 1: PC = EA, else PC = PC + 1;
+  const BNE    = 6b011110; // dest, op1, const        : EA = (R[dest] << 8) + const, if z(R[op1]) == 1: PC = EA, else PC = PC + 1;
+  const LDR    = 6b011111;
+  
+  const ADD    = 6b100000; // dest, op1, op2          : R[dest] = R[op1] + R[op2]
+  const SUB    = 6b100001; // dest, op1, op2          : R[dest] = R[op1] - R[op2]
+  const MUL    = 6b100010; // dest, op1, op2          : R[dest] = R[op1] * R[op2]
+  const DIV    = 6b100011; // dest, op1, op2          : R[dest] = R[op1] / R[op2]
+  const CMPEQ  = 6b100100; // dest, op1, op2          : R[dest] = (R[op1] == R[op2] ? 1 : 0)
+  const CMPLT  = 6b100101; // dest, op1, op2          : R[dest] = (R[op1] < R[op2] ? 1 : 0)
+  const CMPLE  = 6b100110; // dest, op1, op2          : R[dest] = (R[op1] <= R[op2] ? 1 : 0)
+  
+  const AND    = 6b101000; // dest, op1, op2          : R[dest] = R[op1] & R[op2]
+  const OR     = 6b101001; // dest, op1, op2          : R[dest] = R[op1] | R[op2]
+  const XOR    = 6b101010; // dest, op1, op2          : R[dest] = R[op1] ^ R[op2]
+  const SHL    = 6b101100; // dest, op1, op2          : R[dest] = R[op1] << R[op2]
+  const SHR    = 6b101101; // dest, op1, op2          : R[dest] = R[op1] >> R[op2]
+  const SRA    = 6b101110; // dest, op1, op2          : R[dest] = Sext(R[op1] >> R[op2])
+  
+  const ADDC   = 6b110000; // dest, op1, const        : R[dest] = R[op1] + const
+  const SUBC   = 6b110001; // dest, op1, const        : R[dest] = R[op1] - const
+  const MULC   = 6b110010; // dest, op1, const        : R[dest] = R[op1] * const
+  const DIVC   = 6b110011; // dest, op1, const        : R[dest] = R[op1] / const
+  const CMPEQC = 6b110100; // dest, op1, const        : R[dest] = (R[op1] == const ? 1 : 0)
+  const CMPLTC = 6b110101; // dest, op1, const        : R[dest] = (R[op1] < const ? 1 : 0)
+  const CMPLEC = 6b110110; // dest, op1, const        : R[dest] = (R[op1] <= const ? 1 : 0)
+  
+  const ANDC   = 6b111000; // dest, op1, const        : R[dest] = R[op1] & const
+  const ORC    = 6b111001; // dest, op1, const        : R[dest] = R[op1] | const
+  const XORC   = 6b111010; // dest, op1, const        : R[dest] = R[op1] ^ const 
+  const SHLC   = 6b111100; // dest, op1, const        : R[dest] = R[op1] << const
+  const SHRC   = 6b111101; // dest, op1, const        : R[dest] = R[op1] >> const
+  const SRAC   = 6b111110; // dest, op1, const        : R[dest] = Sext(R[op1] >> const)
+}
+
+module controllogic (
+    input opcode[6],  // input opcode
+    output werf,      // 
+    output pcsel[3],
+    output wasel,
+    output asel,
+    output bsel,
+    output alufn[6],
+    output wdsel,         //new include
+    output ra2sel
+  ) {
+
+  always {
+    alufn = 0;
+    werf = 0;
+    pcsel = 0;
+    wasel = 0;
+    asel = 0;
+    bsel = 0;
+    wdsel = 1;
+    ra2sel = 0;
+    
+    case (opcode) {
+    
+      Inst.LD:
+        werf = 1;
+        bsel = 1;
+        asel = 0;
+        wasel = 0;
+        alufn = Alufn.ADD;
+        pcsel = 0;
+        wdsel = 2;
+      Inst.ST:
+        werf = 0;
+        bsel = 1;
+        asel = 0;
+        pcsel = 0;
+        alufn = Alufn.ADD;
+      Inst.SET:    //?
+        werf = 1;
+        bsel = 1;
+      Inst.JMP1:  
+        pcsel = 2;
+        werf  = 0;
+        wasel = 0;
+        wdsel = 0;
+        ra2sel = 1;  
+      Inst.JMP2:  
+        pcsel = 2;
+        werf  = 0;
+        wasel = 0;
+        wdsel = 0;
+        ra2sel = 1;  
+        
+      Inst.JMP:  
+        pcsel = 2;
+        werf  = 0;
+        wasel = 0;
+        wdsel = 0;
+        ra2sel = 1;
+      Inst.BEQ:   
+        pcsel = 1;
+        werf  = 0;
+        wdsel = 0;
+        wasel = 0;
+        ra2sel = 1;
+      Inst.BNE:   
+        pcsel = 1;
+        werf  = 0;
+        wdsel = 0;
+        wasel = 0;
+        ra2sel = 1;
+      Inst.LDR:
+      	werf = 1;
+      	wdsel = 2;
+      	asel = 1;
+      	alufn = Alufn.A;
+      	wasel = 0;
+      	pcsel = 0;
+      Inst.ADD:
+      	alufn = Alufn.ADD;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.SUB:
+        alufn = Alufn.SUB;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.MUL:
+        alufn = Alufn.MUL;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.DIV:
+        alufn = Alufn.DIV;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.CMPEQ:
+        alufn = Alufn.CMPEQ;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.CMPLT:
+        alufn = Alufn.CMPLT;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.CMPLE:
+        alufn = Alufn.CMPLE;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.AND:
+        alufn = Alufn.AND;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.OR:
+        alufn = Alufn.OR;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.XOR:
+        alufn = Alufn.XOR;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.SHL:
+        alufn = Alufn.SHL;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.SHR:
+        alufn = Alufn.SHR;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.SRA:
+        alufn = Alufn.SRA;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 0;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.ADDC:
+        alufn = Alufn.ADD;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.SUBC:
+        alufn = Alufn.SUB;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.MULC:
+        alufn = Alufn.MUL;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.DIVC:
+        alufn = Alufn.DIV;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.CMPEQC:
+        alufn = Alufn.CMPEQ;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.CMPLTC:
+        alufn = Alufn.CMPLT;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.CMPLEC:
+        alufn = Alufn.CMPLE;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.ANDC:
+        alufn = Alufn.AND;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.ORC:
+        alufn = Alufn.OR;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.XORC:
+        alufn = Alufn.XOR;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.SHLC:
+        alufn = Alufn.SHL;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.SHRC:
+        alufn = Alufn.SHR;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+      Inst.SRAC:
+        alufn = Alufn.SRA;
+      	werf = 1;
+      	wdsel = 1;
+      	bsel = 1;
+      	wasel = 0;
+      	pcsel = 0;
+      	asel = 0;
+    } 
+  }
+}

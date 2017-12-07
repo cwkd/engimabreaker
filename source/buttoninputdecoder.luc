@@ -1,0 +1,72 @@
+global ButtonCode {
+
+  const RED    = 8h00;
+  const GREEN  = 8h01;
+  const BLUE   = 8h02;
+  const YELLOW = 8h03;
+  
+  const UP     = 8h04;
+  const DOWN   = 8h05;
+  const LEFT   = 8h06;
+  const RIGHT  = 8h07;
+  const CONF   = 8h08;
+  const NULL   = 8hFF;
+}
+
+module buttoninputdecoder (
+    input clk,  // clock
+    input rst,  // reset
+    input reset,
+    input red,
+    input green,
+    input blue,
+    input yellow,
+    input up,
+    input down,
+    input left,
+    input right,
+    input confirm,
+    output irq,
+    output value[8]
+  ) {
+
+  .clk(clk), .rst(rst) {
+    dff buffer[8];           // program counter
+  }
+  
+  always {
+    irq = 0;
+    value = buffer.q;
+    
+    if (red == 1) {
+      buffer.d = ButtonCode.RED;
+    }
+    else if (green == 1) {
+      buffer.d = ButtonCode.GREEN;
+    }
+    else if (blue == 1) {
+      buffer.d = ButtonCode.BLUE;
+    }
+    else if (yellow == 1) {
+      buffer.d = ButtonCode.YELLOW;
+    }
+    else if (up == 1) {
+      buffer.d = ButtonCode.UP;
+    }
+    else if (down == 1) {
+      buffer.d = ButtonCode.DOWN;
+    }
+    else if (left == 1) {
+      buffer.d = ButtonCode.LEFT;
+    }
+    else if (right == 1) {
+      buffer.d = ButtonCode.RIGHT;
+    }
+    else if (confirm == 1) {
+      buffer.d = ButtonCode.CONF;
+    }
+    else if (reset == 1) {
+      buffer.d = ButtonCode.NULL;
+    }
+  }
+}

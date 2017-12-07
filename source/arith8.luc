@@ -1,0 +1,31 @@
+module arith8 (
+    input a[8],
+    input b[8],
+    input alufn[2],
+    output out[8],
+    output z,
+    output n,
+    output v
+  ) {
+  
+  // submodules of arithmetic module
+  adder adder8;
+  mul mul8;
+  div div8;
+  
+  always {
+    adder8.a = a; adder8.b = b; adder8.alufn = alufn[0];
+    mul8.a = a; mul8.b = b;
+    z = adder8.z; n = adder8.n; v = adder8.v;
+    div8.a = a; div8.b = b;
+        
+    // selecting the output based on the inputs of alufn[1:0]
+    if (alufn == 2b10) {
+      out = mul8.p;  
+    } else if (alufn == 2b11) {
+      out = div8.c;
+    } else {
+      out = adder8.sum;
+    }
+  }
+}

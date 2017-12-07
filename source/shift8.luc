@@ -1,0 +1,80 @@
+module shift8 (
+    input a[8],
+    input b[3],
+    input alufn[2],
+    output shift[8]
+  ) {
+
+  sig xa[8];
+  sig x[8];
+  sig y[8];
+  sig z[8];
+  sig r;
+  var i;
+  
+  always {
+  
+    // reverse inputs for right shift
+    if (alufn[0] == 1) {
+      for (i = 0; i < 8; i++) {
+        xa[i] = a[7-i];
+      }
+    } else {
+      xa = a;
+    }
+
+    // logic for arithmetic shift
+    if (alufn[1] == 1) {
+        r = a[7];
+    } else {
+        r = 0;  
+    }
+    
+    // shift left logic
+    // shift 4 bits
+    if (b[2] == 1) {
+      for (i = 0; i < 4; i++) {
+        x[i] = r;
+      }
+      for (i = 4; i < 8; i++) {
+        x[i] = xa[i-4];
+      } 
+    } else {
+        x = xa;
+    }
+    
+    // shift 2 bits
+    if (b[1] == 1) {
+      for (i = 0; i < 2; i++) {
+        y[i] = r;
+      }
+      for (i = 2; i < 8; i++) {
+        y[i] = x[i-2];
+      }
+    } else {
+        y = x;
+    }
+    
+    // shift 1 bit
+    if (b[0] == 1) {
+      for (i = 1; i < 8; i++) {
+        z[i] = r;
+      }
+      z[0] = r;
+      for (i = 1; i < 8; i++) {
+        z[i] = y[i-1];
+      }
+    } else {
+        z = y;
+    }
+      
+    // reverse outputs for right shift
+    if (alufn[0] == 1) {
+      for (i = 0; i < 8; i++) {
+        shift[i] = z[7 - i];
+      }
+    } else {
+      shift = z;
+    }
+  }
+}

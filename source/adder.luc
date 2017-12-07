@@ -1,0 +1,47 @@
+module adder (
+    input a[8],
+    input b[8],
+    input alufn,
+    output sum[8],
+    output z,
+    output n,
+    output v
+  ) {
+
+  sig xb[8];
+  var i;
+  
+  // 8 full adders  
+  full_adder fa0;
+  full_adder fa1;
+  full_adder fa2;
+  full_adder fa3;
+  full_adder fa4;
+  full_adder fa5;
+  full_adder fa6;
+  full_adder fa7;
+  
+  always {
+  
+    // 2's complement
+
+    for (i = 0; i < 8; i++) {
+      xb[i] = b[i]^alufn;  
+    }
+  
+    // full adder cascades with alufn[0] as carry in to first adder for sub
+    fa0.a = a[0]; fa0.b = xb[0]; fa0.cin = alufn; sum[0] = fa0.sum;
+    fa1.a = a[1]; fa1.b = xb[1]; fa1.cin = fa0.cout; sum[1] = fa1.sum;
+    fa2.a = a[2]; fa2.b = xb[2]; fa2.cin = fa1.cout; sum[2] = fa2.sum;
+    fa3.a = a[3]; fa3.b = xb[3]; fa3.cin = fa2.cout; sum[3] = fa3.sum;
+    fa4.a = a[4]; fa4.b = xb[4]; fa4.cin = fa3.cout; sum[4] = fa4.sum;
+    fa5.a = a[5]; fa5.b = xb[5]; fa5.cin = fa4.cout; sum[5] = fa5.sum;
+    fa6.a = a[6]; fa6.b = xb[6]; fa6.cin = fa5.cout; sum[6] = fa6.sum;
+    fa7.a = a[7]; fa7.b = xb[7]; fa7.cin = fa6.cout; sum[7] = fa7.sum;
+    
+    // compute z, v, n
+    n = fa7.sum;
+    z = !(fa0.sum || fa1.sum || fa2.sum || fa3.sum || fa4.sum || fa5.sum || fa6.sum || fa7.sum);
+    v = ((a[7] && xb[7] && ~fa7.sum) || (~a[7] && ~xb[7] && fa7.sum));
+  }
+}

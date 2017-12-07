@@ -1,0 +1,12 @@
+module div (
+    input a[8],
+    input b[8],
+    output c[8]
+  ) {
+
+  always {
+    // divide a by b, treat a and b as signed
+    
+    c = $signed(a)/$signed(b);
+  }
+}

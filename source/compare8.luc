@@ -1,0 +1,26 @@
+module compare8 (
+    input z,
+    input n,
+    input v,
+    input alufn[2],
+    output cmp[8]
+  ) {
+
+  sig c;
+  
+  always {
+    
+    // selectors for function for LSB of cmp output 
+    if (alufn == 2b01) {
+      c = z;
+    } else if (alufn == 2b10) {
+      c = (n||v)&& !(n&&v); 
+    } else if (alufn == 2b11) {
+      c = z || ((n||v)&& !(n&&v));
+    } else {
+      c = 0;
+    }
+    cmp[7:1] = 7b0000000;
+    cmp[0] = c;
+  }
+}

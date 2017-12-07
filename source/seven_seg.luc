@@ -1,0 +1,33 @@
+module seven_seg (
+    input in[4],     // input encoding
+    output out[8]    // output for pins
+  ) {
+
+  always {
+    out = 0;
+    case (in) {
+      4h0:
+        out = 8h77;
+      4h1:
+        out = 8h24;
+      4h2:
+        out = 8hB3;
+      4h3:
+        out = 8hB6;
+      4h4:
+        out = 8hD4;
+      4h5:
+        out = 8hE6;
+      4h6:
+        out = 8hE7;
+      4h7:
+        out = 8h34;
+      4h8:
+        out = 8hF7;
+      4h9:
+        out = 8hF6;
+      4hF:
+        out = 8h67;
+    }
+  }
+}
