@@ -21,6 +21,7 @@ module mojo_top (
     output seg_two[8],      // seven seg digit two
     output seg_three[8],    // seven seg digit three
     output seg_lives[8],    // seven seg for lives display 
+    output grid[16],        // led grid display
     
     input r_button,         // Red button
     input g_button,         // Green button
@@ -34,6 +35,7 @@ module mojo_top (
   ) {
   
   sig rst;                  // reset signal
+  sig led_sig[4][8];
   
   .clk(clk) {
     // The reset conditioner is used to synchronize the reset signal to the FPGA
@@ -50,6 +52,7 @@ module mojo_top (
   seven_seg seg2;
   seven_seg seg3;
   seven_seg segL;
+  led_grid led_grid;
   
   always {
     reset_cond.in = ~rst_n; // input raw inverted reset signal
@@ -63,12 +66,16 @@ module mojo_top (
     io_led = 3x{{8h00}};    // turn LEDs off
     io_seg = 8hff;          // turn segments off
     io_sel = 4hf;           // select no digits
+    led_sig = 4x{{8h00}};
+    
     
     seg1.in = 4h0;
     seg2.in = 4h0;
     seg3.in = 4h0;
     segL.in = 4h0;
+    led_grid.in = led_sig;
     
+    grid = led_grid.out;
     seg_one = seg1.out;
     seg_two = seg2.out;
     seg_three = seg3.out;

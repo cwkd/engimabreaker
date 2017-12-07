@@ -681,7 +681,7 @@ module programRom (
       16h8329: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
       16h832A: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
       16h832B: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h2D};
-      16h832C: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00}; 
+      16h832C: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00}; 
       
       // BackwardRotor11:
       16h832D: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
@@ -690,11 +690,414 @@ module programRom (
       16h8330: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
       16h8331: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
       16h8332: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h34};
-      16h8333: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00}; 
+      16h8333: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00}; 
       
       // EndFirstChar:
-      16h8334: inst = c{Inst.ADDC, Reg.R18, Reg.R29, 8h00};
-           
+      16h8334: inst = c{Inst.ADDC, Reg.R18, Reg.R29, 8h00};           // store encoded output char
+      
+      // UpdateRotorOne:
+      16h8335: inst = c{Inst.CMPEQC, Reg.R34, Reg.R30, 8h03};         // check if rotor state is 3
+      16h8336: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8h39};            // branch to handler if so
+      16h8337: inst = c{Inst.ADDC, Reg.R30, Reg.R30, 8h01};           // else, increament by 1
+      16h8338: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h3A};            // go to encode second char
+      
+      // RotOneStateZero:
+      16h8339: inst = c{Inst.ADDC, Reg.R30, Reg.R63, 8h00};           // set state to 0
+      
+      // EncodeSecondChar: 
+      16h833A: inst = c{Inst.ADDC, Reg.R29, Reg.R19, 8h00};           // r29 <- second char
+      16h833B: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h833C: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h833D: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h833E: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h833F: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h41};
+      16h8340: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00}; 
+      
+      // ForwardRotor22:
+      16h8341: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h8342: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8343: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8344: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h8345: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h47};
+      16h8346: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};  
+      
+      // ForwardRotor23:
+      16h8347: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8348: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8349: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h834A: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h834B: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h4D};
+      16h834C: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};  
+      
+      // ReturnRotor2:
+      16h834D: inst = c{Inst.SHLC, Reg.R33, Reg.R29, 8h01};
+      16h834E: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h834F: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h51};
+      16h8350: inst = c{Inst.JMP2, Reg.R33, Reg.R63, 8h04}; 
+      
+      // BackwardRotor23:
+      16h8351: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8352: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8353: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8354: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h8355: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h8356: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h58};
+      16h8357: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00}; 
+      
+      // BackwardRotor22:
+      16h8358: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8359: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h835A: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h835B: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h835C: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h835D: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h5F};
+      16h835E: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00}; 
+      
+      // BackwardRotor21:
+      16h835F: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8360: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8361: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8362: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h8363: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h8364: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h66};
+      16h8365: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00}; 
+      
+      // EndSecondChar:
+      16h8366: inst = c{Inst.ADDC, Reg.R19, Reg.R29, 8h00};           // store encoded output char
+      
+      // UpdateRotorOne1:
+      16h8367: inst = c{Inst.CMPEQC, Reg.R34, Reg.R30, 8h03};         // check if rotor state is 3
+      16h8368: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8h6B};            // branch to handler if so
+      16h8369: inst = c{Inst.ADDC, Reg.R30, Reg.R30, 8h01};           // else, increament by 1
+      16h836A: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h6C};            // go to check rotor 2
+      
+      // RotOneStateZero1:
+      16h836B: inst = c{Inst.ADDC, Reg.R30, Reg.R63, 8h00};           // set state to 0
+      
+      // CheckRotTwo:
+      16h836C: inst = c{Inst.CMPEQC, Reg.R34, Reg.R31, 8h03};         // check if rotor state is 3
+      16h836D: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8h70};            // branch to handler if so
+      16h836E: inst = c{Inst.ADDC, Reg.R31, Reg.R31, 8h01};           // else, increament by 1
+      16h836F: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h71};            // go to encode third char
+      
+      // RotTwoStateZero:
+      16h8370: inst = c{Inst.ADDC, Reg.R31, Reg.R63, 8h00};           // set state to 0 
+      
+        
+      // EncodeThirdChar: 
+      16h8371: inst = c{Inst.ADDC, Reg.R29, Reg.R20, 8h00};           // r29 <- third char
+      16h8372: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h8372: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8374: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8375: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h8376: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h78};
+      16h8377: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00}; 
+      
+      // ForwardRotor32:
+      16h8378: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h8379: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h837A: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h837B: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h837C: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h7E};
+      16h837D: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};  
+      
+      // ForwardRotor33:
+      16h837E: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h837F: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8380: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8381: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h8382: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h84};
+      16h8383: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};  
+      
+      // ReturnRotor3:
+      16h8384: inst = c{Inst.SHLC, Reg.R33, Reg.R29, 8h01};
+      16h8385: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h8386: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h88};
+      16h8387: inst = c{Inst.JMP2, Reg.R33, Reg.R63, 8h04}; 
+      
+      // BackwardRotor33:
+      16h8388: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8389: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h838A: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h838B: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h838C: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h838D: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h8F};
+      16h838E: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00}; 
+      
+      // BackwardRotor32:
+      16h838F: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8390: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8391: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8392: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h8393: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h8394: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h96};
+      16h8395: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00}; 
+      
+      // BackwardRotor31:
+      16h8396: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8397: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8398: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8399: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h839A: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h839B: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h9D};
+      16h839C: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00}; 
+      
+      // EndThirdChar:
+      16h839D: inst = c{Inst.ADDC, Reg.R20, Reg.R29, 8h00};           // store encoded output char
+        
+      // UpdateRotorOne2:
+      16h839E: inst = c{Inst.CMPEQC, Reg.R34, Reg.R30, 8h03};         // check if rotor state is 3
+      16h839F: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8hA2};            // branch to handler if so
+      16h83A0: inst = c{Inst.ADDC, Reg.R30, Reg.R30, 8h01};           // else, increament by 1
+      16h83A1: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8hA3};            // go to check rotor 3
+      
+      // RotOneStateZero2:
+      16h83A2: inst = c{Inst.ADDC, Reg.R30, Reg.R63, 8h00};           // set state to 0
+      
+      // CheckRotThree:
+      16h83A3: inst = c{Inst.CMPEQC, Reg.R34, Reg.R32, 8h03};         // check if rotor state is 3
+      16h83A4: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8hA7};            // branch to handler if so
+      16h83A5: inst = c{Inst.ADDC, Reg.R32, Reg.R32, 8h01};           // else, increament by 1
+      16h83A6: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8hA8};            // go to encode fourth char
+      
+      // RotThreeStateZero:
+      16h83A7: inst = c{Inst.ADDC, Reg.R32, Reg.R63, 8h00};           // set state to 0 
+      
+        
+      // EncodeFourthChar: 
+      16h83A8: inst = c{Inst.ADDC, Reg.R29, Reg.R21, 8h00};           // r29 <- fourth char
+      16h83A9: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h83AA: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h83AB: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h83AC: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h83AD: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8hAF};
+      16h83AE: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00}; 
+      
+      // ForwardRotor42:
+      16h83AF: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h83B0: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h83B1: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h83B2: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h83B3: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8hB5};
+      16h83B4: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};  
+      
+      // ForwardRotor43:
+      16h83B5: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h83B6: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h83B7: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h83B8: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h83B9: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8hBB};
+      16h83BA: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};  
+      
+      // ReturnRotor4:
+      16h83BB: inst = c{Inst.SHLC, Reg.R33, Reg.R29, 8h01};
+      16h83BC: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h83BD: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8hBF};
+      16h83BE: inst = c{Inst.JMP2, Reg.R33, Reg.R63, 8h04}; 
+      
+      // BackwardRotor43:
+      16h83BF: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h83C0: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h83C1: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h83C2: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h83C3: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h83C4: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8hC6};
+      16h83C5: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00}; 
+     
+      // BackwardRotor42:
+      16h83C6: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h83C7: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h83C8: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h83C9: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h83CA: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h83CB: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8hCD};
+      16h83CC: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00}; 
+      
+      // BackwardRotor41:
+      16h83CD: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h83CE: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h83CF: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h83D0: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h83D1: inst = c{Inst.ADDC, Reg.LP1, Reg.CPP, 8h00};
+      16h83D2: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8hD4};
+      16h83D3: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00}; 
+     
+      // EndFourthChar:
+      16h83D4: inst = c{Inst.ADDC, Reg.R21, Reg.R29, 8h00};           // store encoded output char
+      
+      // StateDEnd:  
+      16h83D5: inst = c{Inst.ADDC, Reg.R0, Reg.R63, 8h84};            // load page for state E
+      16h83D6: inst = c{Inst.JMP, Reg.R0, Reg.R63, 8h00};             // go to state E
+      
+        
+      // ----------------------------------- State E -------------------------------------------   
+        
+      // StateEStart:  
+      16h8400: inst = c{Inst.ADDC, Reg.CPP, Reg.R63, 8h84};           // set cpp to current page  
+      16h8401: inst = c{Inst.ADDC, Reg.SSP, Reg.R63, 8h34};           // set seven segment pointer
+      16h8402: inst = c{Inst.ADDC, Reg.R52, Reg.R63, 8h00};           // set led to 0
+      16h8403: inst = c{Inst.ADDC, Reg.R53, Reg.R63, 8h00};           // set led to 0
+      16h8404: inst = c{Inst.ADDC, Reg.R54, Reg.R63, 8h00};           // set led to 0
+      16h8405: inst = c{Inst.BRST, 20h00000};                         // clear button buffer    
+        
+      // CheckForOrigPos0  
+      16h8406: inst = c{Inst.CMPEQC, Reg.R0, Reg.BTB, 8hFF};          // check button buffer
+      16h8407: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h06};             // loop if empty
+      
+      16h8408: inst = c{Inst.CMPEQC, Reg.R0, Reg.BTB, 8h04};          // check button buffer
+      16h8409: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h08};             // branch if up press
+      
+      16h840A: inst = c{Inst.CMPEQC, Reg.R0, Reg.BTB, 8h05};          // check button buffer
+      16h840B: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h2C};             // branch if down press
+      
+      16h840C: inst = c{Inst.CMPEQC, Reg.R0, Reg.BTB, 8h06};          // check button buffer
+      16h840D: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h44};             // branch if left press
+      
+      16h840E: inst = c{Inst.CMPEQC, Reg.R0, Reg.BTB, 8h07};          // check button buffer
+      16h840F: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h4A};             // branch if right press
+        
+      16h8410: inst = c{Inst.CMPEQC, Reg.R0, Reg.BTB, 8h08};          // check button buffer
+      16h8411: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h50};             // branch if conf press
+      
+      // CleanUp0:
+      16h8412: inst = c{Inst.BRST, 20h00000};  
+      16h8413: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h06};            // go back to start of loop
+      
+      // UpButtonHandler0:
+      16h8414: inst = c{Inst.CMPEQC, Reg.R0, Reg.SSP, 8h34};          // check if pointer is at digit one 
+      16h8415: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h1A};            // branch to handler
+      16h8416: inst = c{Inst.CMPEQC, Reg.R0, Reg.SSP, 8h35};          // check if pointer is at digit two
+      16h8417: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h20};  
+      16h8418: inst = c{Inst.CMPEQC, Reg.R0, Reg.SSP, 8h36};          // check if pointer is at digit three
+      16h8419: inst = c{Inst.BNE, Reg.CPP, Reg.R0 , 8h26};  
+        
+      // IncrD1Handler0:
+      16h841A: inst = c{Inst.CMPEQC, Reg.R0, Reg.R52, 8h03};          // check if current value is 3 
+      16h841B: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h1E};             // if so, branch to handler
+      16h841C: inst = c{Inst.ADDC, Reg.R52, Reg.R52, 8h01};           // else, increament r53 by 1
+      16h841D: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+      
+      // MoreThanThreeHandler0:
+      16h841E: inst = c{Inst.ADDC, Reg.R52, Reg.R63, 8h00};           // set r52 to 0
+      16h841F: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+       
+      // IncrD2Handler0:
+      16h8420: inst = c{Inst.CMPEQC, Reg.R0, Reg.R53, 8h03};          // check if current value is 3 
+      16h8421: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h24};             // if so, branch to handler
+      16h8422: inst = c{Inst.ADDC, Reg.R53, Reg.R53, 8h01};           // else, increament r53 by 1
+      16h8423: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+      
+      // MoreThanThreeHandler1:
+      16h8424: inst = c{Inst.ADDC, Reg.R53, Reg.R63, 8h00};           // set r53 to 0
+      16h8425: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+         
+      // IncrD3Handler0:
+      16h8426: inst = c{Inst.CMPEQC, Reg.R0, Reg.R54, 8h03};          // check if current value is 3 
+      16h8427: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h2A};             // if so, branch to handler
+      16h8428: inst = c{Inst.ADDC, Reg.R54, Reg.R54, 8h01};           // else, increament r54 by 1
+      16h8429: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+      
+      // MoreThanThreeHandler2:
+      16h842A: inst = c{Inst.ADDC, Reg.R54, Reg.R63, 8h00};           // set r54 to 0
+      16h842B: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up 
+        
+      
+      // DownButtonHandler0:
+      16h842C: inst = c{Inst.CMPEQC, Reg.R0, Reg.SSP, 8h34};          // check if pointer is at digit one 
+      16h842D: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h32};            // branch to handler
+      16h842E: inst = c{Inst.CMPEQC, Reg.R0, Reg.SSP, 8h35};          // check if pointer is at digit two
+      16h842F: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h38};  
+      16h8430: inst = c{Inst.CMPEQC, Reg.R0, Reg.SSP, 8h36};          // check if pointer is at digit three
+      16h8431: inst = c{Inst.BNE, Reg.CPP, Reg.R0 , 8h3E};  
+        
+      // DecrD1Handler0:
+      16h8432: inst = c{Inst.CMPEQC, Reg.R0, Reg.R52, 8h00};          // check if current value is 0 
+      16h8433: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h36};             // if so, branch to handler
+      16h8434: inst = c{Inst.SUBC, Reg.R52, Reg.R52, 8h01};           // else, decreament r53 by 1
+      16h8435: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+      
+      // LessThanZeroHandler0:
+      16h8436: inst = c{Inst.ADDC, Reg.R52, Reg.R63, 8h03};           // set r52 to 3
+      16h8437: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+        
+      // DecrD2Handler0:
+      16h8438: inst = c{Inst.CMPEQC, Reg.R0, Reg.R53, 8h00};          // check if current value is 0 
+      16h8439: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h3C};             // if so, branch to handler
+      16h843A: inst = c{Inst.SUBC, Reg.R53, Reg.R53, 8h01};           // else, decreament r53 by 1
+      16h843B: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+      
+      // LessThanZeroHandler1:
+      16h843C: inst = c{Inst.ADDC, Reg.R53, Reg.R63, 8h03};           // set r53 to 3
+      16h843D: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+         
+      // DecrD3Handler0:
+      16h843E: inst = c{Inst.CMPEQC, Reg.R0, Reg.R54, 8h00};          // check if current value is 0 
+      16h843F: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h42};             // if so, branch to handler
+      16h8440: inst = c{Inst.SUBC, Reg.R54, Reg.R54, 8h01};           // else, decreament r54 by 1
+      16h8441: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+      
+      // LessThanZeroHandler2:
+      16h8442: inst = c{Inst.ADDC, Reg.R54, Reg.R63, 8h03};           // set r54 to 3
+      16h8443: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up 
+  
+      // LeftButtonHandler0:  
+      16h8444: inst = c{Inst.CMPEQC, Reg.R0, Reg.SSP, 8h36};          // check if pointer is at digit three
+      16h8445: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h40};             // if so, branch to digit three handler
+      16h8446: inst = c{Inst.ADDC, Reg.SSP, Reg.SSP, 8h01};           // else increament ssp by 1
+      16h8447: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+        
+      // D3Handler0:
+      16h8448: inst = c{Inst.ADDC, Reg.SSP, Reg.R63, 8h34};           // set to 0x34
+      16h8449: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+      
+      // RightButtonHandler0:  
+      16h844A: inst = c{Inst.CMPEQC, Reg.R0, Reg.SSP, 8h34};          // check if pointer is at digit three
+      16h844B: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h4E};             // if so, branch to digit three handler
+      16h844C: inst = c{Inst.SUBC, Reg.SSP, Reg.SSP, 8h01};           // else decreament ssp by 1
+      16h844D: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+        
+      // D1Handler0:
+      16h844E: inst = c{Inst.ADDC, Reg.SSP, Reg.R63, 8h36};           // set to 0x36
+      16h844F: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h12};            // go to clean up
+        
+      // ConfButtonHandler0
+      16h8450: inst = c{Inst.ADD, Reg.R22, Reg.R63, Reg.R52};         // store rotor pos guess
+      16h8451: inst = c{Inst.ADD, Reg.R23, Reg.R63, Reg.R53};
+      16h8452: inst = c{Inst.ADD, Reg.R24, Reg.R63, Reg.R54};
+      16h8453: inst = c{Inst.BRST, 20h00000};
+      16h8454: inst = c{Inst.ADDC, Reg.R0, Reg.R63, 8h82};            // load state F page
+      16h8455: inst = c{Inst.JMP, Reg.R0, Reg.R63, 8h00};             // jump to state F start seq  
+      
+        
+      // ----------------------------------- State H ------------------------------------------- 
+        
+      // StateHStart:  
+      16h8600: inst = c{Inst.ADDC, Reg.CPP, Reg.R63, 8h86};           // store current page number  
+      16h8601: inst = c{Inst.ADDC, Reg.R48, Reg.R24, 8h00};           // assign candidate to led outputs
+      16h8602: inst = c{Inst.ADDC, Reg.R49, Reg.R25, 8h00};
+      16h8603: inst = c{Inst.ADDC, Reg.R50, Reg.R26, 8h00};
+      16h8604: inst = c{Inst.ADDC, Reg.R51, Reg.R27, 8h00}; 
+      
+      16h8605: inst = c{Inst.CMPEQC, Reg.R0, Reg.R45, 8h04};          // check if bulls == 4
+      16h8606: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h0E};
+      16h8607: inst = c{Inst.SUBC, Reg.R55, Reg.R55, 8h01};    
+      16h8608: inst = c{Inst.CMPEQC, Reg.R0, Reg.R55, 8h00};
+      16h8609: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h0F};
+      
+      16h860A: inst = c{Inst.CMPEQC, Reg.R0, Reg.BTB, 8h08};          // check button buffer
+      16h860B: inst = c{Inst.BNE, Reg.CPP, Reg.R0, 8h10};             // branch if conf press
+      16h860C: inst = c{Inst.BRST, 20h00000};
+      16h860D: inst = c{Inst.JMP, Reg.CPP, Reg.R63, 8h0A};            // else, loop
+      
+      // Win:  
+      16h860E: inst = c{Inst.JMP, Reg.R63, Reg.R63, 8h00};
+      
+      // Lose:
+      16h860F: inst = c{Inst.JMP, Reg.R63, Reg.R63, 8h00};
+      
+      // ContinueGame:
+      16h8610: inst = c{Inst.JMP2, Reg.R63, Reg.R63, 8h84};
+        
       // ------------------------------------- bulls & cows -------------------------------------------  
         
       // bulls and cows sequence

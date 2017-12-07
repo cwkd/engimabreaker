@@ -9,55 +9,55 @@ global Reg {
   const R6  = 6h06;
   const R7  = 6h07;
   
-  const R8  = 6h08; // original string[0]
-  const R9  = 6h09; // original string[1]
-  const R10 = 6h0A; // original string[2]
-  const R11 = 6h0B; // original string[3]
-  const R12 = 6h0C; // original pos[0]
-  const R13 = 6h0D; // original pos[1]
-  const R14 = 6h0E; // original pos[2]
-  const R15 = 6h0F; // original config[0]
+  const R8  = 6h08;  // original string[0]
+  const R9  = 6h09;  // original string[1]
+  const R10 = 6h0A;  // original string[2]
+  const R11 = 6h0B;  // original string[3]
+  const R12 = 6h0C;  // original pos[0]
+  const R13 = 6h0D;  // original pos[1]
+  const R14 = 6h0E;  // original pos[2]
+  const R15 = 6h0F;  // original config[0]
   
-  const R16 = 6h10; // original config[1]
-  const R17 = 6h11; // original config[2]
-  const R18 = 6h12; // encoded output[0]
-  const R19 = 6h13; // encoded output[1]
-  const R20 = 6h14; // encoded output[2]
-  const R21 = 6h15; // encoded output[3]
-  const R22 = 6h16; // guess pos[0]
-  const R23 = 6h17; // guess pos[1]
+  const R16 = 6h10;  // original config[1]
+  const R17 = 6h11;  // original config[2]
+  const R18 = 6h12;  // encoded output[0]
+  const R19 = 6h13;  // encoded output[1]
+  const R20 = 6h14;  // encoded output[2]
+  const R21 = 6h15;  // encoded output[3]
+  const R22 = 6h16;  // guess pos[0]
+  const R23 = 6h17;  // guess pos[1]
   
-  const R24 = 6h18; // guess pos[2]
-  const R25 = 6h19; // candidate[0]
-  const R26 = 6h1A; // candidate[1]
-  const R27 = 6h1B; // candidate[2]
-  const R28 = 6h1C; // candidate[3]
-  const R29 = 6h1D; // enigma return value
-  const R30 = 6h1E; // rotor state[0]
-  const R31 = 6h1F; // rotor state[1]
+  const R24 = 6h18;  // guess pos[2]
+  const R25 = 6h19;  // candidate[0]
+  const R26 = 6h1A;  // candidate[1]
+  const R27 = 6h1B;  // candidate[2]
+  const R28 = 6h1C;  // candidate[3]
+  const R29 = 6h1D;  // enigma return value
+  const R30 = 6h1E;  // rotor state[0]
+  const R31 = 6h1F;  // rotor state[1]
   
-  const R32 = 6h20; // rotor state[2]
-  const R33 = 6h21; // calculated offset[0]
-  const R34 = 6h22; // calculated offset[1]
-  const R35 = 6h23; // calculated offset[2]
-  const R36 = 6h24; // atemp[0]
-  const R37 = 6h25; // atemp[1]
-  const R38 = 6h26; // atemp[2]
-  const R39 = 6h27; // atemp[3]
-  
-  const R40 = 6h28; // btemp[0]
-  const R41 = 6h29; // btemp[1]
-  const R42 = 6h2A; // btemp[2]
-  const R43 = 6h2B; // btemp[3]
-  const R44 = 6h2C; // i
-  const R45 = 6h2D; // bulls
-  const R46 = 6h2E; // cows
+  const R32 = 6h20;  // rotor state[2]
+  const R33 = 6h21;  // calculated offset[0]
+  const R34 = 6h22;  // calculated offset[1]
+  const R35 = 6h23;  // calculated offset[2]
+  const R36 = 6h24;  // atemp[0]
+  const R37 = 6h25;  // atemp[1]
+  const R38 = 6h26;  // atemp[2]
+  const R39 = 6h27;  // atemp[3]
+   
+  const R40 = 6h28;  // btemp[0]
+  const R41 = 6h29;  // btemp[1]
+  const R42 = 6h2A;  // btemp[2]
+  const R43 = 6h2B;  // btemp[3]
+  const R44 = 6h2C;  // i
+  const R45 = 6h2D;  // bulls
+  const R46 = 6h2E;  // cows
   const R47 = 6h2F;
   
-  const R48 = 6h30;  //
-  const R49 = 6h31;  //
-  const R50 = 6h32;  //
-  const R51 = 6h33;  //
+  const R48 = 6h30;  // reserved for led
+  const R49 = 6h31;  // reserved for led
+  const R50 = 6h32;  // reserved for led
+  const R51 = 6h33;  // reserved for led
   const R52 = 6h34;  // reserved for seven seg[0]
   const R53 = 6h35;  // reserved for seven seg[1]
   const R54 = 6h36;  // reserved for seven seg[2]
@@ -87,6 +87,10 @@ module regfile (
     input button[8],  // button input
     input ra1[6],     // read address 1
     input ra2[6],     // read address 2
+    output led[4][8], // led outputs
+    output seven_seg[4][8], 
+    output bulls[8],
+    output cows[8],
     input wa[6],      // write address 1
     output rd1[8],    // read data 1
     output rd2[8],    // read data 2
@@ -104,6 +108,17 @@ module regfile (
     rd2 = regs.q[ra2];
     z = 1;
     regs.d[Reg.BTB] = button;
+    led[0] = regs.q[Reg.R48];
+    led[1] = regs.q[Reg.R49];
+    led[2] = regs.q[Reg.R50];
+    led[3] = regs.q[Reg.R51];
+    seven_seg[0] = regs.q[Reg.R52];
+    seven_seg[1] = regs.q[Reg.R53];
+    seven_seg[2] = regs.q[Reg.R54];
+    seven_seg[3] = regs.q[Reg.R55];
+    bulls = regs.q[Reg.R45];
+    cows = regs.q[Reg.R46];
+    
     
     if (we == 1 && wa != Reg.R63) {
       regs.d[wa] = wd;

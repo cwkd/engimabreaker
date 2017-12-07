@@ -18,6 +18,7 @@
     <src>adder.luc</src>
     <src>regfile.luc</src>
     <src>full_adder.luc</src>
+    <src>led_grid.luc</src>
     <ucf lib="true">io_shield.ucf</ucf>
     <ucf>custom.ucf</ucf>
     <ucf lib="true">mojo.ucf</ucf>
