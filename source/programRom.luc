@@ -925,9 +925,15 @@ module programRom (
       // EndFourthChar:
       16h83D4: inst = c{Inst.ADDC, Reg.R21, Reg.R29, 8h00};           // store encoded output char
       
+      // DisplayOutput:
+      16h83D5: inst = c{Inst.ADDC, Reg.R48, Reg.R18, 8h00};           // set led output to display candidate
+      16h83D6: inst = c{Inst.ADDC, Reg.R49, Reg.R19, 8h00};
+      16h83D7: inst = c{Inst.ADDC, Reg.R50, Reg.R20, 8h00};
+      16h83D8: inst = c{Inst.ADDC, Reg.R51, Reg.R21, 8h00};
+        
       // StateDEnd:  
-      16h83D5: inst = c{Inst.ADDC, Reg.R0, Reg.R63, 8h84};            // load page for state E
-      16h83D6: inst = c{Inst.JMP, Reg.R0, Reg.R63, 8h00};             // go to state E
+      16h83D9: inst = c{Inst.ADDC, Reg.R0, Reg.R63, 8h84};            // load page for state E
+      16h83DA: inst = c{Inst.JMP, Reg.R0, Reg.R63, 8h00};             // go to state E
       
         
       // ----------------------------------- State E -------------------------------------------   
@@ -1069,6 +1075,312 @@ module programRom (
       16h8455: inst = c{Inst.JMP, Reg.R0, Reg.R63, 8h00};             // jump to state F start seq  
       
         
+      // ----------------------------------- State F -------------------------------------------
+        
+      //StateFStart
+      16h8500: inst = c{Inst.ADDC, Reg.CPP, Reg.R63, 8h85};
+      16h8501: inst = c{Inst.ADDC, Reg.R25, Reg.R18, 8h00};
+      16h8502: inst = c{Inst.ADDC, Reg.R26, Reg.R19, 8h00};
+      16h8503: inst = c{Inst.ADDC, Reg.R27, Reg.R20, 8h00};
+      16h8504: inst = c{Inst.ADDC, Reg.R28, Reg.R21, 8h00};
+      
+      16h8505: inst = c{Inst.ADD, Reg.R30, Reg.R22, 8h00};
+      16h8506: inst = c{Inst.ADD, Reg.R31, Reg.R23, 8h00};
+      16h8507: inst = c{Inst.ADD, Reg.R32, Reg.R24, 8h00};
+      
+      //EncodeFirstChar
+      16h8508: inst = c{Inst.ADDC, Reg.R29, Reg.R25, 8h00};
+      16h8509: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h850A: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h850B: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h850C: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h850D: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h0F};
+      16h850E: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00};
+      
+      //ForwardRotor12
+      16h850F: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h8510: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8511: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8512: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8513: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h15};
+      16h8514: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};
+      
+      //ForwardRotor13
+      16h8515: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8516: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8517: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8518: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8519: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h1B};
+      16h851A: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};
+      
+      //ReturnRotor1
+      16h851B: inst = c{Inst.ADD, Reg.R33, Reg.R29, Reg.R29};
+      16h851C: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h851D: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h1F};
+      16h851E: inst = c{Inst.JMP2, Reg.R33, Reg.R63, 8h04};
+      
+      //BackwardRotor13
+      16h851F: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8520: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8521: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8522: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h8523: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8524: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h26};
+      16h8525: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};
+      
+      //BackwardRotor12
+      16h8526: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h8527: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8528: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8529: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h852A: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h852B: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h2D};
+      16h852C: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};
+      
+      //BackwardRotor11
+      16h852D: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h852E: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h852F: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8530: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h8531: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8532: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h34};
+      16h8533: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00};
+      
+      //EndingFirstChar
+      16h8534: inst = c{Inst.ADD, Reg.R25, Reg.R63, Reg.R29};
+     
+      //UpdateRotor1
+      16h8535: inst = c{Inst.CMPEQC, Reg.R34, Reg.R30, 8h03};
+      16h8536: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8h39};                // branch to handle state 3
+      16h8537: inst = c{Inst.ADDC, Reg.R30, Reg.R30, 8h01};
+      16h8538: inst = c{Inst.JMP1, Reg.CPP, Reg.R33, 8h3A};
+      
+      //RotOneStateZero
+      16h8539: inst = c{Inst.ADDC, Reg.R30, Reg.R63, 8h00};
+      
+      //EncodeSecondChar
+      16h853A: inst = c{Inst.ADD, Reg.R29, Reg.R63, Reg.R26};
+      16h853B: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h853C: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h853D: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h853E: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h853F: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h41};
+      16h8540: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00};
+      
+      //ForwardRotor22
+      16h8541: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h8542: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8543: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8544: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8545: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h47};
+      16h8546: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};
+      
+      //ForwardRotor23
+      16h8547: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8548: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8549: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h854A: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h854B: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h4D};
+      16h854C: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};
+      
+      //ReturnRotor2
+      16h854D: inst = c{Inst.ADD, Reg.R33, Reg.R29, Reg.R29};
+      16h854E: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h854F: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h51};
+      16h8550: inst = c{Inst.JMP2, Reg.R33, Reg.R63, 8h04};
+      
+      //BackwardRotor23
+      16h8551: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8552: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8553: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8554: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h8555: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8556: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h58};
+      16h8557: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};
+      
+      //BackwardRotor22
+      16h8558: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h8559: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h855A: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h855B: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h855C: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h855D: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h2D};
+      16h855E: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};
+      
+      //BackwardRotor21
+      16h855F: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h8560: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8561: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8562: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h8563: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8564: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h66};
+      16h8565: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00};
+      
+      //EndingSecondChar
+      16h8566: inst = c{Inst.ADD, Reg.R26, Reg.R63, Reg.R29};
+      
+      //UpdateRotors1&2
+      16h8567: inst = c{Inst.CMPEQC, Reg.R34, Reg.R30, 8h03};
+      16h8568: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8h6B};
+      16h8569: inst = c{Inst.ADDC, Reg.R30, Reg.R30, 8h01};
+      16h856A: inst = c{Inst.JMP1, Reg.CPP, Reg.R63, 8h6C};
+      
+      //RotOneStateZero
+      16h856B: inst = c{Inst.ADDC, Reg.R30, Reg.R63, 8h00};
+    
+      //CheckRotTwo
+      16h856C: inst = c{Inst.CMPEQC, Reg.R34, Reg.R31, 8h03};
+      16h856D: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8h70};
+      16h856E: inst = c{Inst.ADDC, Reg.R31, Reg.R31, 8h01};
+      16h856F: inst = c{Inst.JMP1, Reg.CPP, Reg.R63, 8h71};
+      
+      //RotTwoStateZero
+      16h8570: inst = c{Inst.ADDC, Reg.R31, Reg.R63, 8h00};
+      
+      //EncodeThirdChar
+      16h8571: inst = c{Inst.ADD, Reg.R29, Reg.R63, Reg.R27};
+      16h8572: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h8573: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8574: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8575: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8576: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h78};
+      16h8577: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00};
+      
+      //ForwardRotor32
+      16h8578: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h8579: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h857A: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h857B: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h857C: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h7E};
+      16h857D: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};
+      
+      //ForwardRotor33
+      16h857E: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h857F: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8580: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8581: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8582: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h84};
+      16h8583: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};
+     
+      //ReturnRotor3
+      16h8584: inst = c{Inst.ADD, Reg.R33, Reg.R29, Reg.R29};
+      16h8585: inst = c{Inst.ADD, Reg.LP1, Reg.R63, 8h88};
+      16h8586: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h88};
+      16h8587: inst = c{Inst.JMP2, Reg.R33, Reg.R63, 8h04};
+      
+      //BackwardRotor33
+      16h8588: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h8589: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h858A: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h858B: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h858C: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h858D: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h8F};
+      16h858E: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};
+      
+      //BackwardRotor32
+      16h858F: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h8590: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8591: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8592: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h8593: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h8594: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h96};
+      16h8595: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};
+      
+      //BackwardRotor31
+      16h8596: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h8597: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h8598: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h8599: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h859A: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h859B: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h9D};
+      16h859C: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00};
+      
+      //EndingThirdChar
+      16h859D: inst = c{Inst.ADD, Reg.R27, Reg.R63, Reg.R29};
+      
+      //UpdateRotors1&3
+      16h859E: inst = c{Inst.CMPEQC, Reg.R34, Reg.R30, 8h03};
+      16h859F: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8hA2};
+      16h85A0: inst = c{Inst.ADDC, Reg.R30, Reg.R30, 8h01};
+      16h85A1: inst = c{Inst.JMP1, Reg.CPP, Reg.R63, 8hA3};
+      
+      //RotOneStateZero
+      16h85A2: inst = c{Inst.ADDC, Reg.R30, Reg.R63, 8h00};
+     
+      //CheckRotThree
+      16h85A3: inst = c{Inst.CMPEQC, Reg.R34, Reg.R32, 8h03};
+      16h85A4: inst = c{Inst.BNE, Reg.CPP, Reg.R34, 8hA7};
+      16h85A5: inst = c{Inst.ADDC, Reg.R32, Reg.R32, 8h01};
+      16h85A6: inst = c{Inst.JMP1, Reg.CPP, Reg.R33, 8hA8};
+      
+      //RotThreeStateZero
+      16h85A7: inst = c{Inst.ADDC, Reg.R32, Reg.R63, 8h00};
+      
+      //EncodeFourthChar
+      16h85A8: inst = c{Inst.ADD, Reg.R29, Reg.R63, Reg.R28};
+      16h85A9: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h85AA: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h85AB: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h85AC: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h85AD: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h78};
+      16h85AE: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00};
+      
+      //ForwardRotor42
+      16h85AF: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h85B0: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h85B1: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h85B2: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h85B3: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h7E};
+      16h85B4: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};
+      
+      //ForwardRotor43
+      16h85B5: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h85B6: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h85B7: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h85B8: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h85B9: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h84};
+      16h85BA: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};
+      
+      //ReturnRotor4
+      16h85BB: inst = c{Inst.ADD, Reg.R33, Reg.R29, Reg.R29};
+      16h85BC: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h85BD: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h88};
+      16h85BE: inst = c{Inst.JMP2, Reg.R33, Reg.R63, 8h04};
+      
+      //BackwardRotor43
+      16h85BF: inst = c{Inst.SHLC, Reg.R33, Reg.R32, 8h03};
+      16h85C0: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h85C1: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h85C2: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h85C3: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h85C4: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h8F};
+      16h85C5: inst = c{Inst.JMP1, Reg.R17, Reg.R33, 8h00};
+      
+      //BackwardRotor42
+      16h85C6: inst = c{Inst.SHLC, Reg.R33, Reg.R31, 8h03};
+      16h85C7: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h85C8: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h85C9: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h85CA: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h85CB: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h96};
+      16h85CD: inst = c{Inst.JMP1, Reg.R16, Reg.R33, 8h00};
+      
+      //BackwardRotor41
+      16h85CE: inst = c{Inst.SHLC, Reg.R33, Reg.R30, 8h03};
+      16h85CF: inst = c{Inst.SHLC, Reg.R29, Reg.R29, 8h01};
+      16h85D0: inst = c{Inst.ADD, Reg.R33, Reg.R33, Reg.R29};
+      16h85D1: inst = c{Inst.ADDC, Reg.R33, Reg.R33, 8h20};
+      16h85D2: inst = c{Inst.ADD, Reg.LP1, Reg.R63, Reg.CPP};
+      16h85D3: inst = c{Inst.ADDC, Reg.LP2, Reg.R63, 8h9D};
+      16h85D4: inst = c{Inst.JMP1, Reg.R15, Reg.R33, 8h00};
+      
+      //EndingFourthChar
+      16h85D5: inst = c{Inst.ADD, Reg.R28, Reg.R63, Reg.R29};
+      16h85D6: inst = c{Inst.JMP2, Reg.R63, Reg.R63, 8h88};           // jump to bulls and cows
+            
+        
+        
+          
       // ----------------------------------- State H ------------------------------------------- 
         
       // StateHStart:  
@@ -1281,7 +1593,7 @@ module programRom (
       16h8877: inst = c{Inst.ADDC, Reg.R46, Reg.R46, 8h01};           // increament cows by 1
       
       // endforcow4:
-      16h8878: inst = c{Inst.JMP};
+      16h8878: inst = c{Inst.JMP2, Reg.R63, Reg.R63, 8h86};           // go to state H
     }
   }
 }

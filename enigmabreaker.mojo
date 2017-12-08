@@ -11,6 +11,7 @@
     <src>div.luc</src>
     <src top="true">mojo_top.luc</src>
     <src>programRom.luc</src>
+    <src>bull_cow.luc</src>
     <src>controllogic.luc</src>
     <src>arith8.luc</src>
     <src>mul.luc</src>
@@ -20,8 +21,8 @@
     <src>full_adder.luc</src>
     <src>led_grid.luc</src>
     <ucf lib="true">io_shield.ucf</ucf>
-    <ucf>custom.ucf</ucf>
     <ucf lib="true">mojo.ucf</ucf>
+    <ucf>custom.ucf</ucf>
     <component>reset_conditioner.luc</component>
   </files>
 </project>

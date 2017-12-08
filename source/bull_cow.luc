@@ -1,0 +1,11 @@
+module bull_cow (
+    input clk,  // clock
+    input rst,  // reset
+    input in[8],
+    output out[4]
+  ) {
+
+  always {
+    out = 0;
+  }
+}

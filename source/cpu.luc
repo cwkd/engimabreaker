@@ -15,6 +15,10 @@ module cpu (
     output read,
     output address[16],
     output buttonreset,
+    output led[4][8], // led outputs
+    output seven_seg[4][8], 
+    output bulls[8],
+    output cows[8],
     input din[26]
   ) {
   
@@ -93,6 +97,10 @@ module cpu (
     z   = regfile.z;
     regfile.wa = dest;
     regfile.we = werf;
+    led = regfile.led;
+    seven_seg = regfile.seven_seg;
+    bulls = regfile.bulls;
+    cows = regfile.cows;
     
     adata = rd1;
     bdata = rd2;
@@ -147,5 +155,6 @@ module cpu (
     //pc.d = pc.q + 1;           // increament PC by default (1)
     pc.d[7:0] = localAddress;  // set higher 16 bits of pc to page number
     pc.d[15:8] = pageNumber;   // set lower 16 bits for pc to instruction line offset
+   
   }
 }
